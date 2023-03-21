@@ -1,0 +1,8 @@
+application:
+  title: spring-boot-helloworld
+  version: 1.0.0
+
+server:
+  port: 8080
+  compression:
+    enabled: true

@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: 'corretto'
+      - name: Create yajsw
+        uses: meta205/actions-yajsw@v1
+        with:
+          dist-path: './spring-boot-helloworld/release'
+          service-name: 'spring-boot-helloworld'
+          java-app-jar-file: 'spring-boot-helloworld-1.0.0-SNAPSHOT.jar'
+          java-vm-options: '-Duser.home=${wrapper_home}/..'
+          java-max-memory: '16384'
+      - name: Create release files
+        working-directory: './spring-boot-helloworld'
+        run: |
+          mvn package
+          cp -r ./config/application.yaml ./release/config
+          cp -r ./target/spring-boot-helloworld-1.0.0-SNAPSHOT.jar ./release
+          zip -r ./spring-boot-helloworld-1.0.0-SNAPSHOT.zip ./*
+          ls -al
