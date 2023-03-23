@@ -19,7 +19,7 @@ jobs:
         uses: meta205/actions-yajsw@v1
         with:
           tag-name: 'v1'
-          dist-path: 'spring-boot-helloworld/release'
+          dist-path: './spring-boot-helloworld/release'
           service-name: 'spring-boot-helloworld'
           java-app-jar-file: 'spring-boot-helloworld-1.0.0-SNAPSHOT.jar'
           java-vm-options: '-Duser.home=${wrapper_home}/..'
