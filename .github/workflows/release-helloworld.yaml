@@ -19,18 +19,18 @@ jobs:
         uses: meta205/actions-yajsw@v1
         with:
           tag-name: 'v1'
-          dist-path: './spring-boot-helloworld/release'
+          dist-path: 'spring-boot-helloworld/release'
           service-name: 'spring-boot-helloworld'
           java-app-jar-file: 'spring-boot-helloworld-1.0.0-SNAPSHOT.jar'
           java-vm-options: '-Duser.home=${wrapper_home}/..'
           java-max-memory: '16384'
       - name: Create release files
-        working-directory: './spring-boot-helloworld'
+        working-directory: 'spring-boot-helloworld'
         run: |
           mvn package
-          cp -r ./config/application.yaml ./release/config
-          cp -r ./target/spring-boot-helloworld-1.0.0-SNAPSHOT.jar ./release
-          zip -r ./spring-boot-helloworld-1.0.0-SNAPSHOT.zip ./*
+          cp -r config/application.yaml release/config
+          cp -r target/spring-boot-helloworld-1.0.0-SNAPSHOT.jar release
+          zip -r spring-boot-helloworld-1.0.0-SNAPSHOT.zip *
           cd release
           zip -r ../spring-boot-helloworld-1.0.0-SNAPSHOT.zip *
       - name: Create release
@@ -47,6 +47,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: spring-boot-helloworld-1.0.0-SNAPSHOT.zip
+          asset_path: spring-boot-helloworld/spring-boot-helloworld-1.0.0-SNAPSHOT.zip
           asset_name: spring-boot-helloworld-1.0.0-SNAPSHOT.zip
           asset_content_type: application/zip
