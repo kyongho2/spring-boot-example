@@ -15,31 +15,44 @@ jobs:
         with:
           java-version: 11
           distribution: 'corretto'
+      - name: Set up yq
+        run: |
+          echo $(pwd) >> $GITHUB_PATH
+          wget -qO $(pwd)/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          chmod a+x $(pwd)/yq
+      - name: Get release info
+        working-directory: './spring-boot-helloworld'
+        run: |
+          echo "application-name=$(yq --xml-attribute-prefix @ -p=xml '.project.name' pom.xml)" >> $GITHUB_OUTPUT
+          echo "application-version=$(yq --xml-attribute-prefix @ -p=xml '.project.version' pom.xml)" >> $GITHUB_OUTPUT
+          echo "application-date=$(date +'%Y-%m-%d' --date='+9 hour')" >> $GITHUB_OUTPUT
+        id: release-info
       - name: Create yajsw
         uses: meta205/actions-yajsw@v1
         with:
           tag-name: 'v1'
           dist-path: './spring-boot-helloworld/release'
           service-name: 'spring-boot-helloworld'
-          java-app-jar-file: 'spring-boot-helloworld-1.0.0-SNAPSHOT.jar'
+          java-app-jar-file: '${{ steps.release-info.outputs.application-name }}-${{ steps.release-info.outputs.application-version }}.jar'
           java-vm-options: '-Duser.home=${wrapper_home}/..'
           java-max-memory: '16384'
       - name: Create release files
-        working-directory: 'spring-boot-helloworld'
+        working-directory: './spring-boot-helloworld'
         run: |
           mvn package
-          cp -r config/application.yaml release/config
-          cp -r target/spring-boot-helloworld-1.0.0-SNAPSHOT.jar release
-          zip -r spring-boot-helloworld-1.0.0-SNAPSHOT.zip *
-          cd release
-          zip -r ../spring-boot-helloworld-1.0.0-SNAPSHOT.zip *
+          mkdir -p ./release/config
+          cp ./config/application.yaml ./release/config
+          cp ./target/${{ steps.release-info.outputs.application-name }}-${{ steps.release-info.outputs.application-version }}.jar ./release
+          zip -r ./${{ steps.release-info.outputs.application-name }}-${{ steps.release-info.outputs.application-version }}.zip ./*
+          cd ./release
+          zip -r ../${{ steps.release-info.outputs.application-name }}-${{ steps.release-info.outputs.application-version }}.zip ./*
       - name: Create release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: 1.0.0-SNAPSHOT
-          release_name: 1.0.0-SNAPSHOT
+          tag_name: ${{ steps.release-info.outputs.application-version }}
+          release_name: ${{ steps.release-info.outputs.application-version }}
         id: create-release
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
@@ -47,6 +60,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: spring-boot-helloworld/spring-boot-helloworld-1.0.0-SNAPSHOT.zip
-          asset_name: spring-boot-helloworld-1.0.0-SNAPSHOT.zip
+          asset_path: ./spring-boot-helloworld/${{ steps.release-info.outputs.application-name }}-${{ steps.release-info.outputs.application-version }}.zip
+          asset_name: ${{ steps.release-info.outputs.application-name }}-${{ steps.release-info.outputs.application-version }}.zip
           asset_content_type: application/zip
