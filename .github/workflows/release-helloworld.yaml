@@ -43,7 +43,6 @@ jobs:
           mkdir -p ./release/config
           cp ./config/application.yaml ./release/config
           cp ./target/${{ steps.release-info.outputs.application-name }}-${{ steps.release-info.outputs.application-version }}.jar ./release
-          zip -r ./${{ steps.release-info.outputs.application-name }}-${{ steps.release-info.outputs.application-version }}.zip ./*
           cd ./release
           zip -r ../${{ steps.release-info.outputs.application-name }}-${{ steps.release-info.outputs.application-version }}.zip ./*
       - name: Create release
