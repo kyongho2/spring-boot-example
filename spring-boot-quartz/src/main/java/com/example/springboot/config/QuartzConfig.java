@@ -24,15 +24,15 @@ import java.util.Properties;
 @Configuration
 public class QuartzConfig {
 
-    private final TriggersListener triggersListener;
+    private final GlobalTriggerListener globalTriggerListener;
 
-    private final JobsListener jobsListener;
+    private final GlobalJobListener globalJobListener;
 
     private final QuartzProperties quartzProperties;
 
-    public QuartzConfig(TriggersListener triggersListener, JobsListener jobsListener, QuartzProperties quartzProperties) {
-        this.triggersListener = triggersListener;
-        this.jobsListener = jobsListener;
+    public QuartzConfig(GlobalTriggerListener globalTriggerListener, GlobalJobListener globalJobListener, QuartzProperties quartzProperties) {
+        this.globalTriggerListener = globalTriggerListener;
+        this.globalJobListener = globalJobListener;
         this.quartzProperties = quartzProperties;
     }
 
@@ -49,8 +49,8 @@ public class QuartzConfig {
         Properties properties = new Properties();
         properties.putAll(quartzProperties.getProperties());
 
-        schedulerFactoryBean.setGlobalTriggerListeners(triggersListener);
-        schedulerFactoryBean.setGlobalJobListeners(jobsListener);
+        schedulerFactoryBean.setGlobalTriggerListeners(globalTriggerListener);
+        schedulerFactoryBean.setGlobalJobListeners(globalJobListener);
         schedulerFactoryBean.setOverwriteExistingJobs(true);
         schedulerFactoryBean.setQuartzProperties(properties);
         schedulerFactoryBean.setWaitForJobsToCompleteOnShutdown(true);
@@ -78,45 +78,45 @@ public class QuartzConfig {
     }
 
     @Component
-    public static class JobsListener implements JobListener {
+    public static class GlobalJobListener implements JobListener {
 
         @Override
         public String getName() {
-            return "globalJob";
+            return getClass().getSimpleName();
         }
 
         @Override
         public void jobToBeExecuted(JobExecutionContext context) {
             JobKey jobKey = context.getJobDetail().getKey();
-            log.info("jobToBeExecuted :: jobKey : {}", jobKey);
+            log.info("jobToBeExecuted: jobKey({})", jobKey);
         }
 
         @Override
         public void jobExecutionVetoed(JobExecutionContext context) {
             JobKey jobKey = context.getJobDetail().getKey();
-            log.info("jobExecutionVetoed :: jobKey : {}", jobKey);
+            log.info("jobExecutionVetoed: jobKey({})", jobKey);
         }
 
         @Override
         public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
             JobKey jobKey = context.getJobDetail().getKey();
-            log.info("jobWasExecuted :: jobKey : {}", jobKey);
+            log.info("jobWasExecuted: jobKey({})", jobKey);
         }
 
     }
 
     @Component
-    public static class TriggersListener implements TriggerListener {
+    public static class GlobalTriggerListener implements TriggerListener {
 
         @Override
         public String getName() {
-            return "globalTrigger";
+            return getClass().getSimpleName();
         }
 
         @Override
         public void triggerFired(Trigger trigger, JobExecutionContext context) {
             JobKey jobKey = trigger.getJobKey();
-            log.info("triggerFired at {} :: jobKey : {}", trigger.getStartTime(), jobKey);
+            log.info("triggerFired: startTime({}), jobKey({})", trigger.getStartTime(), jobKey);
         }
 
         @Override
@@ -127,13 +127,13 @@ public class QuartzConfig {
         @Override
         public void triggerMisfired(Trigger trigger) {
             JobKey jobKey = trigger.getJobKey();
-            log.info("triggerMisfired at {} :: jobKey : {}", trigger.getStartTime(), jobKey);
+            log.info("triggerFired: startTime({}), jobKey({})", trigger.getStartTime(), jobKey);
         }
 
         @Override
         public void triggerComplete(Trigger trigger, JobExecutionContext context, Trigger.CompletedExecutionInstruction triggerInstructionCode) {
             JobKey jobKey = trigger.getJobKey();
-            log.info("triggerComplete at {} :: jobKey : {}", trigger.getStartTime(), jobKey);
+            log.info("triggerComplete: startTime({}), jobKey({})", trigger.getStartTime(), jobKey);
         }
 
     }
