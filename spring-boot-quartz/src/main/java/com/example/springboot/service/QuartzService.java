@@ -41,9 +41,9 @@ public class QuartzService {
         schedulerFactoryBean.getScheduler().scheduleJob(jobDetail, trigger);
     }
 
-    public boolean deleteJob(String name, String group) throws SchedulerException {
+    public void deleteJob(String name, String group) throws SchedulerException {
         JobKey jobKey = JobKey.jobKey(name, group);
-        return schedulerFactoryBean.getScheduler().deleteJob(jobKey);
+        schedulerFactoryBean.getScheduler().deleteJob(jobKey);
     }
 
     private static Trigger createCronTrigger(String name, String group, String cronExpression) {
