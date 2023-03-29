@@ -1,0 +1,15 @@
+application:
+  title: spring-boot-quartz
+  version: 1.0.0-SNAPSHOT
+
+server:
+  port: 8080
+  compression:
+    enabled: true
+
+spring:
+  quartz:
+    scheduler-name: QuartzScheduler
+    properties:
+      org.quartz.threadPool:
+        threadCount: 5

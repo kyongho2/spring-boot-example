@@ -1,6 +1,6 @@
 application:
   title: spring-boot-helloworld
-  version: 1.0.0
+  version: 1.0.0-SNAPSHOT
 
 server:
   port: 8080
