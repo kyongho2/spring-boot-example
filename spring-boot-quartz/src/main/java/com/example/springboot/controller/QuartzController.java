@@ -1,6 +1,7 @@
 package com.example.springboot.controller;
 
-import com.example.springboot.job.SimpleJob;
+import com.example.springboot.dto.QuartzJobRequest;
+import com.example.springboot.job.QuartzSimpleJob;
 import com.example.springboot.service.QuartzService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
@@ -8,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -20,14 +19,8 @@ public class QuartzController {
     private QuartzService quartzService;
 
     @PostMapping("/job")
-    public ResponseEntity<String> scheduleJob(
-            @RequestParam(name = "name") String name,
-            @RequestParam(name = "group") String group,
-            @RequestParam(name = "start-date-time") LocalDateTime startDateTime,
-            @RequestParam(name = "repeat-interval") int repeatInterval,
-            @RequestParam(name = "repeat-count") int repeatCount) throws SchedulerException {
-
-        quartzService.scheduleJob(name, group, startDateTime, repeatInterval, repeatCount, SimpleJob.class, null);
+    public ResponseEntity<String> scheduleJob(@RequestBody QuartzJobRequest quartzJobRequest) throws SchedulerException {
+        quartzService.scheduleJob(quartzJobRequest, QuartzSimpleJob.class);
         return new ResponseEntity<>("Job created successfully", HttpStatus.CREATED);
     }
 

@@ -1,5 +1,6 @@
 package com.example.springboot.service;
 
+import com.example.springboot.dto.QuartzJobRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.context.ApplicationContext;
@@ -27,14 +28,23 @@ public class QuartzService {
         this.schedulerFactoryBean = schedulerFactoryBean;
     }
 
-    public void scheduleJob(String name, String group, String cronExpression, Class<? extends Job> jobClass, JobDataMap jobDataMap) throws SchedulerException {
+    public void scheduleJob(QuartzJobRequest quartzJobRequest, Class<? extends Job> jobClass) throws SchedulerException {
+        String cronExpression = quartzJobRequest.getCronExpression();
+        if (cronExpression != null && !cronExpression.isEmpty()) {
+            scheduleJob(quartzJobRequest.getName(), quartzJobRequest.getGroup(), cronExpression, quartzJobRequest.getJobDataMap(), jobClass);
+        } else {
+            scheduleJob(quartzJobRequest.getName(), quartzJobRequest.getGroup(), quartzJobRequest.getStartAt(), quartzJobRequest.getRepeatInterval(), quartzJobRequest.getRepeatCount(), quartzJobRequest.getJobDataMap(), jobClass);
+        }
+    }
+
+    private void scheduleJob(String name, String group, String cronExpression, JobDataMap jobDataMap, Class<? extends Job> jobClass) throws SchedulerException {
         Trigger trigger = createCronTrigger(name, group, cronExpression);
         JobDetail jobDetail = createJob(name, group, jobClass, jobDataMap, context);
 
         schedulerFactoryBean.getScheduler().scheduleJob(jobDetail, trigger);
     }
 
-    public void scheduleJob(String name, String group, LocalDateTime startDateTime, int repeatInterval, int repeatCount, Class<? extends Job> jobClass, JobDataMap jobDataMap) throws SchedulerException {
+    private void scheduleJob(String name, String group, LocalDateTime startDateTime, int repeatInterval, int repeatCount, JobDataMap jobDataMap, Class<? extends Job> jobClass) throws SchedulerException {
         Trigger trigger = createSimpleTrigger(name, group, startDateTime, repeatInterval, repeatCount);
         JobDetail jobDetail = createJob(name, group, jobClass, jobDataMap, context);
 
@@ -61,11 +71,15 @@ public class QuartzService {
         return factoryBean.getObject();
     }
 
-    private static Trigger createSimpleTrigger(String name, String group, LocalDateTime startDateTime, int repeatInterval, int repeatCount) {
+    private static Trigger createSimpleTrigger(String name, String group, LocalDateTime startAt, int repeatInterval, int repeatCount) {
+        if (startAt == null) {
+            startAt = LocalDateTime.now();
+        }
+
         SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
         factoryBean.setName(name);
         factoryBean.setGroup(group);
-        factoryBean.setStartTime(Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant()));
+        factoryBean.setStartTime(Date.from(startAt.atZone(ZoneId.systemDefault()).toInstant()));
         factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
         factoryBean.setRepeatInterval(repeatInterval);
         factoryBean.setRepeatCount(repeatCount);

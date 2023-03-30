@@ -88,19 +88,19 @@ public class QuartzConfig {
         @Override
         public void jobToBeExecuted(JobExecutionContext context) {
             JobKey jobKey = context.getJobDetail().getKey();
-            log.info("jobToBeExecuted: jobKey({})", jobKey);
+            log.info("jobToBeExecuted     : {}", jobKey);
         }
 
         @Override
         public void jobExecutionVetoed(JobExecutionContext context) {
             JobKey jobKey = context.getJobDetail().getKey();
-            log.info("jobExecutionVetoed: jobKey({})", jobKey);
+            log.info("jobExecutionVetoed  : {}", jobKey);
         }
 
         @Override
         public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
             JobKey jobKey = context.getJobDetail().getKey();
-            log.info("jobWasExecuted: jobKey({})", jobKey);
+            log.info("jobWasExecuted      : {}", jobKey);
         }
 
     }
@@ -116,7 +116,8 @@ public class QuartzConfig {
         @Override
         public void triggerFired(Trigger trigger, JobExecutionContext context) {
             JobKey jobKey = trigger.getJobKey();
-            log.info("triggerFired: startTime({}), jobKey({})", trigger.getStartTime(), jobKey);
+            log.info("================================================================================");
+            log.info("triggerFired        : {}, {}", jobKey, trigger.getStartTime());
         }
 
         @Override
@@ -127,13 +128,14 @@ public class QuartzConfig {
         @Override
         public void triggerMisfired(Trigger trigger) {
             JobKey jobKey = trigger.getJobKey();
-            log.info("triggerFired: startTime({}), jobKey({})", trigger.getStartTime(), jobKey);
+            log.info("triggerFired        : {}, {}", jobKey, trigger.getStartTime());
         }
 
         @Override
         public void triggerComplete(Trigger trigger, JobExecutionContext context, Trigger.CompletedExecutionInstruction triggerInstructionCode) {
             JobKey jobKey = trigger.getJobKey();
-            log.info("triggerComplete: startTime({}), jobKey({})", trigger.getStartTime(), jobKey);
+            log.info("triggerComplete     : {}, {}", jobKey, trigger.getStartTime());
+            log.info("================================================================================");
         }
 
     }
