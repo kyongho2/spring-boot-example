@@ -18,6 +18,7 @@ public class QuartzJobRequest {
 
     private String cronExpression;
 
+    private String jobClass;
     private JobDataMap jobDataMap;
 
     public LocalDateTime getStartAt() {

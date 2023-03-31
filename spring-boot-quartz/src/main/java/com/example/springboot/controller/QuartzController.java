@@ -29,7 +29,7 @@ public class QuartzController {
 
     @PostMapping("/job")
     public ResponseEntity<String> scheduleJob(@RequestBody QuartzJobRequest quartzJobRequest) throws SchedulerException {
-        quartzService.scheduleJob(quartzJobRequest, QuartzSimpleJob.class);
+        quartzService.scheduleJob(quartzJobRequest);
         return new ResponseEntity<>("Job created successfully", HttpStatus.CREATED);
     }
 

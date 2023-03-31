@@ -82,7 +82,6 @@ public class QuartzService {
                         .group(jobKey.getGroup())
                         .status(status)
                         .startAt(asLocalDateTime(trigger.getStartTime()))
-                        .endAt(asLocalDateTime(trigger.getEndTime()))
                         .prevFireAt(asLocalDateTime(trigger.getPreviousFireTime()))
                         .nextFireAt(asLocalDateTime(trigger.getNextFireTime()))
                         .build();
@@ -94,7 +93,15 @@ public class QuartzService {
         return jobList;
     }
 
-    public void scheduleJob(QuartzJobRequest quartzJobRequest, Class<? extends Job> jobClass) throws SchedulerException {
+    @SuppressWarnings("unchecked")
+    public void scheduleJob(QuartzJobRequest quartzJobRequest) throws SchedulerException {
+        Class<? extends Job> jobClass;
+        try {
+            jobClass = (Class<? extends Job>) Class.forName(quartzJobRequest.getJobClass());
+        } catch (ClassNotFoundException e) {
+            throw new SchedulerException(e);
+        }
+
         String cronExpression = quartzJobRequest.getCronExpression();
         if (cronExpression != null && !cronExpression.isEmpty()) {
             scheduleJob(quartzJobRequest.getName(), quartzJobRequest.getGroup(), cronExpression, quartzJobRequest.getJobDataMap(), jobClass);

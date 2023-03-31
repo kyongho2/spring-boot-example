@@ -16,7 +16,6 @@ public class QuartzJobResponse {
     private String status;
 
     private LocalDateTime startAt;
-    private LocalDateTime endAt;
     private LocalDateTime prevFireAt;
     private LocalDateTime nextFireAt;
 
