@@ -122,6 +122,21 @@ public class QuartzService {
         schedulerFactoryBean.getScheduler().deleteJob(jobKey);
     }
 
+    public void pauseJob(String name, String group) throws SchedulerException {
+        JobKey jobKey = JobKey.jobKey(name, group);
+        schedulerFactoryBean.getScheduler().pauseJob(jobKey);
+    }
+
+    public void resumeJob(String name, String group) throws SchedulerException {
+        JobKey jobKey = JobKey.jobKey(name, group);
+        schedulerFactoryBean.getScheduler().resumeJob(jobKey);
+    }
+
+    public void stopJob(String name, String group) throws SchedulerException {
+        JobKey jobKey = JobKey.jobKey(name, group);
+        schedulerFactoryBean.getScheduler().interrupt(jobKey);
+    }
+
     private SimpleTrigger createSimpleTrigger(String name, String group, LocalDateTime startAt, int intervalInSeconds) {
         if (intervalInSeconds == 0) {
             return (SimpleTrigger) TriggerBuilder.newTrigger()
