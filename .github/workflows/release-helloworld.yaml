@@ -28,7 +28,7 @@ jobs:
           java-version: 11
           distribution: 'corretto'
       - name: Create yajsw
-        uses: meta205/actions-yajsw@v1.1
+        uses: meta205/actions-yajsw@v1
         with:
           yajsw-version: '12.14'
           dist-path: './spring-boot-helloworld/release'
