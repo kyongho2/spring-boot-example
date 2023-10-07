@@ -30,7 +30,7 @@ jobs:
       - name: Create yajsw
         uses: meta205/actions-yajsw@v1
         with:
-          yajsw-version: '12.14'
+          yajsw-version: '13.10'
           dist-path: './spring-boot-helloworld/release'
           service-name: 'spring-boot-helloworld'
           java-app-jar-file: '${{ steps.release-info.outputs.name }}-${{ steps.release-info.outputs.version }}.jar'
