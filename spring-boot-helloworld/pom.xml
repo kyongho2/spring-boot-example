@@ -13,7 +13,7 @@
 
     <groupId>spring-boot-example</groupId>
     <artifactId>spring-boot-helloworld</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>spring-boot-helloworld</name>
 
     <build>
