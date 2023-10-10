@@ -15,11 +15,11 @@ jobs:
           echo $(pwd) >> $GITHUB_PATH
           wget -qO $(pwd)/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           chmod a+x $(pwd)/yq
-      - name: Get release info
+      - name: Set release info
         working-directory: './spring-boot-helloworld'
         run: |
-          echo "name=$(yq --xml-attribute-prefix @ -p=xml '.project.name' pom.xml)" >> $GITHUB_OUTPUT
-          echo "version=$(yq --xml-attribute-prefix @ -p=xml '.project.version' pom.xml)" >> $GITHUB_OUTPUT
+          echo "name=$(yq --xml-attribute-prefix -p=xml '.project.name' pom.xml)" >> $GITHUB_OUTPUT
+          echo "version=$(yq --xml-attribute-prefix -p=xml '.project.version' pom.xml)" >> $GITHUB_OUTPUT
           echo "date=$(date +'%Y-%m-%d' --date='+9 hour')" >> $GITHUB_OUTPUT
         id: release-info
       - name: Set up JDK 11
